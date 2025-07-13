@@ -1,0 +1,5 @@
+ignoredBuiltDependencies:
+  - better-sqlite3
+  - bufferutil
+  - sqlite3
+  - utf-8-validate

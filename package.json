@@ -1,0 +1,26 @@
+{
+  "name": "pumpfun-golden-dog-alert",
+  "version": "1.0.0",
+  "description": "PumpFun金狗预警系统 - Mac M1本地版",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && pnpm dev",
+    "dev:frontend": "cd frontend && pnpm dev",
+    "setup": "pnpm install && cd backend && pnpm install && cd ../frontend && pnpm install"
+  },
+  "keywords": [
+    "solana",
+    "pumpfun",
+    "crypto",
+    "trading",
+    "alert"
+  ],
+  "author": "enf",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.98.2"
+  }
+}
