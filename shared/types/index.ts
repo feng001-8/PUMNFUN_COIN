@@ -6,13 +6,18 @@ export interface TokenInfo {
   decimals: number
   totalSupply: string
   createdAt: Date
+  createdTimestamp?: number  // 添加时间戳属性
   creatorAddress: string
+  creator?: string  // 添加创建者属性
   initialLiquidity: number
   socialLinks?: {
     twitter?: string
     telegram?: string
     website?: string
   }
+  twitter?: string  // 添加直接的社交媒体属性
+  telegram?: string
+  website?: string
   isActive?: boolean  // 添加这个属性
 }
 

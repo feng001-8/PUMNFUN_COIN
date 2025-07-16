@@ -1,0 +1,63 @@
+{
+  "timestamp": "2025-07-14T13:04:32.396Z",
+  "endpoint": "https://pumpportal.fun/data-api/real-time",
+  "websocketEndpoint": "wss://pumpportal.fun/api/data",
+  "results": {
+    "http": {
+      "available": true,
+      "status": 200,
+      "statusText": "OK",
+      "responseTime": 5475,
+      "headers": {
+        "access-control-allow-origin": "*",
+        "cache-control": "public, max-age=0",
+        "connection": "keep-alive",
+        "content-encoding": "gzip",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Mon, 14 Jul 2025 13:03:38 GMT",
+        "etag": "W/\"104bd-197be95342a\"",
+        "last-modified": "Mon, 30 Jun 2025 02:05:38 GMT",
+        "server": "nginx/1.18.0",
+        "transfer-encoding": "chunked"
+      }
+    },
+    "websocket": {
+      "available": true,
+      "connectionTime": 3083,
+      "messagesReceived": 2,
+      "dataStreamActive": true
+    },
+    "diagnostics": {
+      "dns": {
+        "success": true,
+        "addresses": [
+          "35.194.64.63"
+        ],
+        "resolveTime": 347
+      },
+      "ping": {
+        "success": true,
+        "averageTime": null,
+        "output": "PING pumpportal.fun (35.194.64.63): 56 data bytes\n64 bytes from 35.194.64.63: icmp_seq=0 ttl=52 time=369.254 ms\n64 bytes from 35.194.64.63: icmp_seq=1 ttl=52 time=366.556 ms\n\n--- pumpportal.fun ping statistics ---\n3 packets transmitted, 2 packets received, 33.3% packet loss\nround-trip min/avg/max/stddev = 366.556/367.905/369.254/1.349 ms\n"
+      },
+      "traceroute": {
+        "success": true,
+        "output": " 1  192.168.5.1 (192.168.5.1)  9.812 ms  9.139 ms  10.524 ms\n 2  10.10.142.41 (10.10.142.41)  11.102 ms  17.228 ms  16.786 ms\n 3  172.20.1.253 (172.20.1.253)  8.743 ms  6.656 ms  23.570 ms\n 4  221.4.210.161 (221.4.210.161)  9.372 ms  31.236 ms  18.245 ms\n 5  120.80.201.9 (120.80.201.9)  26.986 ms  14.061 ms\n    120.80.201.13 (120.80.201.13)  14.424 ms\n 6  112.96.0.173 (112.96.0.173)  11.888 ms\n    112.96.0.101 (112.96.0.101)  13.996 ms\n    112.97.0.9 (112.97.0.9)  20.561 ms\n 7  * * 219.158.7.17 (219.158.7.17)  46.126 ms\n 8  219.158.5.150 (219.158.5.150)  46.288 ms *\n    219.158.9.18 (219.158.9.18)  49.805 ms\n 9  * * *\n10  219.158.96.38 (219.158.96.38)  204.068 ms\n    219.158.100.22 (219.158.100.22)  189.231 ms\n    219.158.96.42 (219.158.96.42)  223.248 ms\n",
+        "hops": 15
+      }
+    }
+  },
+  "summary": {
+    "httpAvailable": true,
+    "websocketAvailable": true,
+    "anyEndpointAvailable": true,
+    "dataStreamActive": true,
+    "overallHealth": "优秀 (Excellent)"
+  },
+  "recommendations": [
+    "✅ 所有端点都可用",
+    "🚀 建议使用 WebSocket 获得最佳性能",
+    "⚡ 响应时间较慢，考虑优化网络或使用 CDN"
+  ],
+  "analysisTime": 58560
+}

@@ -1,0 +1,48 @@
+{
+  "timestamp": "2025-07-14T12:13:43.417Z",
+  "summary": {
+    "total": 3,
+    "healthy": 0,
+    "unhealthy": 3
+  },
+  "details": {
+    "pumpfun": {
+      "healthy": false,
+      "error": "fetch failed",
+      "duration": "230ms",
+      "timestamp": "2025-07-14T12:13:43.020Z"
+    },
+    "jupiter": {
+      "healthy": false,
+      "error": "fetch failed",
+      "duration": "344ms",
+      "timestamp": "2025-07-14T12:13:43.166Z"
+    },
+    "solana": {
+      "healthy": false,
+      "error": "fetch failed",
+      "duration": "592ms",
+      "timestamp": "2025-07-14T12:13:43.416Z"
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "high",
+      "service": "PumpFun API",
+      "issue": "API 不可用",
+      "action": "系统已自动降级使用模拟数据，建议监控 API 恢复状态"
+    },
+    {
+      "priority": "medium",
+      "service": "Jupiter API",
+      "issue": "价格数据 API 不可用",
+      "action": "使用备用价格数据源或模拟价格数据"
+    },
+    {
+      "priority": "medium",
+      "service": "Solana RPC",
+      "issue": "Solana 节点连接异常",
+      "action": "考虑切换到其他 RPC 节点"
+    }
+  ]
+}

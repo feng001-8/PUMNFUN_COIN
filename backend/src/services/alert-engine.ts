@@ -1,5 +1,9 @@
-import { Database } from '../database/mock-database.js'
+import { DatabaseManager } from '../database/schema.js'
 import { AlertType } from '../../../shared/types/index.js'
+import { logger } from '../utils/logger.js'
+import { errorHandler, createError, withErrorHandling } from '../utils/error-handler.js'
+import { enhancedErrorHandler, ErrorType, ErrorSeverity } from '../utils/enhanced-error-handler.js'
+import { environment } from '../config/environment.js'
 import type { Alert, TokenInfo } from '../../../shared/types/index.ts'
 import type { Server } from 'socket.io'
 
@@ -16,32 +20,52 @@ interface TokenCandidate {
 }
 
 export class AlertEngine {
-  private db: Database
+  private db: DatabaseManager
+  private io?: Server
   private isRunning: boolean = false
   
-  constructor(db: Database) {
+  constructor(db: DatabaseManager) {
     this.db = db
+    logger.info('🚨 预警引擎已初始化')
+  }
+
+  setSocketIO(io: Server): void {
+    this.io = io
   }
 
   async start() {
     if (this.isRunning) return
     this.isRunning = true
-    console.log('🚨 预警引擎启动')
+    logger.info('🚨 预警引擎启动')
     
-    // 每30秒检查预警条件
-    setInterval(() => {
-      this.checkAlertConditions()
-    }, 30000)
+    try {
+      // 启动定时任务
+      logger.info('✅ 预警引擎启动完成，开始监控预警条件')
+      
+      // 立即执行一次检查
+      await this.checkAlertConditions()
+      
+      // 每30秒检查一次预警条件
+      setInterval(() => {
+        this.checkAlertConditions().catch(error => {
+          errorHandler.handleError(error, 'checkAlertConditions定时任务')
+        })
+      }, 30000)
+      
+    } catch (error) {
+      errorHandler.handleError(error as Error, '预警引擎启动')
+      throw error
+    }
   }
 
   async stop() {
     this.isRunning = false
-    console.log('🛑 预警引擎停止')
+    logger.info('🛑 预警引擎停止')
   }
 
   private async checkAlertConditions() {
     try {
-      console.log('🔍 检查预警条件...')
+      logger.debug('🔍 检查预警条件...')
       
       // 检查金狗预警
       await this.checkGoldenDogAlerts()
@@ -53,7 +77,10 @@ export class AlertEngine {
       await this.checkAbnormalTradingAlerts()
       
     } catch (error) {
-      console.error('❌ 检查预警条件失败:', error)
+      await enhancedErrorHandler.handleError(
+        error as Error,
+        'checkAlertConditions'
+      )
     }
   }
 
@@ -73,9 +100,9 @@ export class AlertEngine {
         WHERE t.is_active = 1
           AND p.timestamp > datetime('now', '-10 minutes')
           AND td.timestamp > datetime('now', '-10 minutes')
-          AND p.price_change_5m > 50  -- 5分钟涨幅 > 50%
-          AND td.volume_change > 300  -- 交易量增长 > 300%
-          AND td.liquidity > 10       -- 流动性 > 10 SOL
+          AND p.price_change_5m > 10  -- 5分钟涨幅 > 10% (降低阈值)
+          AND td.volume_change > 50   -- 交易量增长 > 50% (降低阈值)
+          AND td.liquidity > 1        -- 流动性 > 1 SOL (降低阈值)
         ORDER BY p.price_change_5m DESC
       `
       
@@ -87,18 +114,21 @@ export class AlertEngine {
       }
       
     } catch (error) {
-      console.error('❌ 检查金狗预警失败:', error)
+      await enhancedErrorHandler.handleError(
+        error as Error,
+        'checkGoldenDogAlerts'
+      )
     }
   }
 
   private async checkRiskAlerts() {
     // TODO: 实现风险预警检查
-    console.log('🔍 检查风险预警...')
+    logger.debug('🔍 检查风险预警...')
   }
 
   private async checkAbnormalTradingAlerts() {
     // TODO: 实现异常交易预警检查
-    console.log('🔍 检查异常交易预警...')
+    logger.debug('🔍 检查异常交易预警...')
   }
 
   private async createGoldenDogAlert(tokenData: TokenCandidate) {
@@ -163,21 +193,29 @@ export class AlertEngine {
         alert.timestamp.toISOString(), alert.isRead ? 1 : 0
       )
       
-      console.log(`✅ 保存预警: ${alert.title}`)
+      logger.info(`✅ 保存预警: ${alert.title}`)
     } catch (error) {
-      console.error('❌ 保存预警失败:', error)
+      await enhancedErrorHandler.handleError(
+        error as Error,
+        'saveAlert',
+        { alertType: alert.type, tokenAddress: alert.tokenAddress }
+      )
     }
   }
 
   private async broadcastAlert(alert: Alert) {
     try {
       // 通过Socket.io广播预警
-      // 注意：这里需要延迟导入io实例，避免循环依赖
-      const { io } = await import('../index.js')
-      io.emit('new_alert', alert)
-      console.log(`📡 广播预警: ${alert.title}`)
+      if (this.io) {
+        this.io.emit('new_alert', alert)
+        logger.info(`📡 广播预警: ${alert.title}`)
+      }
     } catch (error) {
-      console.error('❌ 广播预警失败:', error)
+      await enhancedErrorHandler.handleError(
+        error as Error,
+        'broadcastAlert',
+        { alertType: alert.type, tokenAddress: alert.tokenAddress }
+      )
     }
   }
 }
